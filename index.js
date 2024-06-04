@@ -33,35 +33,6 @@ async function run() {
     const projectsCollection = db.collection("projects");
     const blogsCollection = db.collection("blogs");
 
-    // User Registration
-    app.post("/register", async (req, res) => {
-      const { name, email, password } = req.body;
-
-      // Check if email already exists
-      const existingUser = await usersCollection.findOne({ email });
-      if (existingUser) {
-        return res.status(400).json({
-          success: false,
-          message: "User already exists",
-        });
-      }
-
-      // Hash the password
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      // Insert user into the database
-      await usersCollection.insertOne({
-        name,
-        email,
-        password: hashedPassword,
-      });
-
-      res.status(201).json({
-        success: true,
-        message: "User registered successfully",
-      });
-    });
-
     // User Login
     app.post("/login", async (req, res) => {
       const { email, password } = req.body;
@@ -90,7 +61,7 @@ async function run() {
       });
     });
 
-    // * create a new category
+    // * create a new skill
     app.post("/skill", async (req, res) => {
       const skill = req.body;
       const result = await skillsCollection.insertOne(skill);
@@ -101,11 +72,49 @@ async function run() {
       });
     });
     // get all skills
-    app.get("skills", async (req, res) => {
+    app.get("/skills", async (req, res) => {
       const result = await skillsCollection.find().toArray();
       res.status(200).json({
         success: true,
         message: "All Skills retrieved successfully",
+        data: result,
+      });
+    });
+    // * create a new category
+    app.post("/project", async (req, res) => {
+      const project = req.body;
+      const result = await projectsCollection.insertOne(project);
+      res.status(200).json({
+        success: true,
+        message: "Skill created successfully",
+        data: result,
+      });
+    });
+    // get all skills
+    app.get("/projects", async (req, res) => {
+      const result = await projectsCollection.find().toArray();
+      res.status(200).json({
+        success: true,
+        message: "All projects retrieved successfully",
+        data: result,
+      });
+    });
+    // * create a new category
+    app.post("/blog", async (req, res) => {
+      const blog = req.body;
+      const result = await blogsCollection.insertOne(blog);
+      res.status(200).json({
+        success: true,
+        message: "Blog created successfully",
+        data: result,
+      });
+    });
+    // get all Blogs
+    app.get("/blogs", async (req, res) => {
+      const result = await blogsCollection.find().toArray();
+      res.status(200).json({
+        success: true,
+        message: "All blogs retrieved successfully",
         data: result,
       });
     });
