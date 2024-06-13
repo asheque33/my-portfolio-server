@@ -80,22 +80,68 @@ async function run() {
         data: result,
       });
     });
-    // * create a new category
+    // * update a skill
+    app.put("/skill/:id", async (req, res) => {
+      const id = parseInt(req.params.id);
+      const filter = { id };
+      const skill = req.body;
+      const image = req.body.image;
+      const options = { upsert: true };
+      const updateSkill = {
+        $set: {
+          ...skill,
+          image: image,
+        },
+      };
+      const result = await skillsCollection.updateOne(
+        filter,
+        updateSkill,
+        options
+      );
+      res.status(200).json({
+        success: true,
+        message: "Skill updated successfully",
+        data: result,
+      });
+    });
+    // * create a new project
     app.post("/project", async (req, res) => {
       const project = req.body;
       const result = await projectsCollection.insertOne(project);
       res.status(200).json({
         success: true,
-        message: "Skill created successfully",
+        message: "Project created successfully",
         data: result,
       });
     });
-    // get all skills
+    // get all projects
     app.get("/projects", async (req, res) => {
       const result = await projectsCollection.find().toArray();
       res.status(200).json({
         success: true,
         message: "All projects retrieved successfully",
+        data: result,
+      });
+    });
+    // * update a project
+    app.put("/project/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const project = req.body;
+      const options = { upsert: true };
+      const updateProject = {
+        $set: {
+          ...project,
+        },
+      };
+      const result = await projectsCollection.updateOne(
+        filter,
+        updateProject,
+        options
+      );
+      res.status(200).json({
+        success: true,
+        message: "Project updated successfully",
         data: result,
       });
     });
